@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import OpenAILogo from "@/components/logos/open-ai";
 import LangChainLogo from "@/components/logos/langchain";
@@ -121,10 +121,10 @@ const container = {
   }
 };
 
-const item = {
+/* const item = {
   hidden: { opacity: 0, y: 20 },
   show: { opacity: 1, y: 0 }
-};
+}; */
 
 export function FrameworksSection() {
   return (

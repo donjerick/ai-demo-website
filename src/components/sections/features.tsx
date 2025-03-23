@@ -6,7 +6,7 @@ import OpenAI from "../icons/open-ai";
 import Claude from "../icons/claude";
 import LangChain from "../icons/langchain";
 
-const container = {
+/* const container = {
   hidden: { opacity: 0 },
   show: {
     opacity: 1,
@@ -14,12 +14,12 @@ const container = {
       staggerChildren: 0.1
     }
   }
-};
+}; */
 
-const item = {
+/* const item = {
   hidden: { opacity: 0, y: 20 },
   show: { opacity: 1, y: 0 }
-};
+}; */
 
 export function FeaturesSection() {
   return (
@@ -375,13 +375,13 @@ export function FeaturesSection() {
                     
                     <div className="flex items-start justify-end gap-2">
                       <div className="bg-gray-800 rounded-lg rounded-tr-none px-5 py-4 text-white/90 text-base">
-                        Yes, let's do it.
+                        Yes, let&rsquo;s do it.
                       </div>
                     </div>
                     
                     <div className="flex items-start gap-2">
                       <div className="bg-gray-900 rounded-lg rounded-tl-none px-6 py-4 text-white/90 text-base space-y-3">
-                        <p>Here's your secure payment link:</p>
+                        <p>Here&rsquo;s your secure payment link:</p>
                         <div className="bg-black text-white rounded-lg p-3 flex items-center justify-between border border-gray-800">
                           <div>
                             <div className="text-sm text-gray-400">Amount</div>
@@ -414,13 +414,13 @@ export function FeaturesSection() {
                   <div className="space-y-3">
                     <div className="flex items-start gap-2">
                       <div className="bg-gray-900 rounded-lg rounded-tl-none px-5 py-4 text-white/90 text-base">
-                        I've found a flight to Tokyo for ₱11,599. Ready to book?
+                        I&rsquo;ve found a flight to Tokyo for ₱11,599. Ready to book?
                       </div>
                     </div>
                     
                     <div className="flex items-start justify-end gap-2">
                       <div className="bg-gray-800 rounded-lg rounded-tr-none px-5 py-4 text-white/90 text-base">
-                        Perfect! Let's book it.
+                        Perfect! Let&rsquo;s book it.
                       </div>
                     </div>
                     
