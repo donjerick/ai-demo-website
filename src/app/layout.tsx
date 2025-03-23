@@ -16,6 +16,25 @@ export const metadata: Metadata = {
   title: "Zip AI Toolkit - Integrate Payments into Your AI Agent",
   description: "Seamlessly integrate Zip payment services into your AI agent with minimal configuration. Compatible with OpenAI Agent SDK, LangChain, and Vercel AI SDK.",
   keywords: ["AI toolkit", "payment integration", "OpenAI", "LangChain", "Vercel AI SDK", "Zip payments"],
+  openGraph: {
+    title: "Zip AI Toolkit - Integrate Payments into Your AI Agent",
+    description: "Seamlessly integrate Zip payment services into your AI agent with minimal configuration.",
+    images: [
+      {
+        url: "/images/meta/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Zip AI Toolkit - Add Payment Services to Your AI Agent"
+      }
+    ],
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Zip AI Toolkit - Integrate Payments into Your AI Agent",
+    description: "Seamlessly integrate Zip payment services into your AI agent with minimal configuration.",
+    images: ["/images/meta/og-image.png"],
+  }
 };
 
 export default function RootLayout({
