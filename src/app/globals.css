@@ -186,22 +186,20 @@
 }
 
 /* Custom scrollbar styling */
-.scrollbar-custom::-webkit-scrollbar {
+.custom-scrollbar::-webkit-scrollbar {
   width: 8px;
 }
-
-.scrollbar-custom::-webkit-scrollbar-track {
+.custom-scrollbar::-webkit-scrollbar-track {
   background: transparent;
 }
-
-.scrollbar-custom::-webkit-scrollbar-thumb {
-  background-color: rgba(100, 116, 139, 0.2);
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #52525b;
   border-radius: 20px;
   border: 2px solid transparent;
 }
-
-.scrollbar-custom::-webkit-scrollbar-thumb:hover {
-  background-color: rgba(100, 116, 139, 0.4);
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #52525b transparent;
 }
 
 /* Gradient animation */

@@ -65,8 +65,8 @@ export function Navbar() {
               </Button>
             </Link>
             <Button asChild>
-              <Link href="https://dashboard.zip.ph/developers" target="_blank" rel="noopener noreferrer">
-                Get Started
+              <Link href="/demo">
+                Live Demo
               </Link>
             </Button>
           </div>
