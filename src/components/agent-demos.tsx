@@ -63,12 +63,12 @@ export function AgentDemos() {
       className="max-w-full mx-auto"
     >
       <Tabs defaultValue="openai" className="w-full">
-        <TabsList className="grid grid-cols-3 mb-8 w-full bg-background/50 backdrop-blur-sm border border-border/30 py-1.5 px-0 rounded-xl">
+        <TabsList className="grid grid-cols-3 mb-8 w-full bg-transparent backdrop-blur-sm  py-1.5 px-0 rounded-xl">
           {sdkDemos.map((demo) => (
             <TabsTrigger 
               key={demo.id} 
               value={demo.id} 
-              className="text-sm py-2.5 font-medium transition-all data-[state=active]:bg-primary/10 data-[state=active]:text-primary data-[state=active]:shadow-sm data-[state=active]:border-primary/20 rounded-lg"
+              className="text-sm py-2.5 font-medium transition-all data-[state=active]:bg-primary/10 data-[state=active]:text-primary data-[state=active]:shadow-sm data-[state=active]:border-primary/20 rounded-lg cursor-pointer"
             >
               <div className="flex items-center space-x-2">
                 <div className="h-5 w-5">

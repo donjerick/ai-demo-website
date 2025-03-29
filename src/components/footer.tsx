@@ -41,7 +41,7 @@ export function Footer() {
             <ul className="space-y-2">
               <li>
                 <Link 
-                  href="#features" 
+                  href="/#features" 
                   className="text-sm text-muted-foreground hover:text-foreground transition-colors"
                 >
                   Features
@@ -49,7 +49,7 @@ export function Footer() {
               </li>
               <li>
                 <Link 
-                  href="#use-cases" 
+                  href="/#use-cases" 
                   className="text-sm text-muted-foreground hover:text-foreground transition-colors"
                 >
                   Use Cases
@@ -57,7 +57,7 @@ export function Footer() {
               </li>
               <li>
                 <Link 
-                  href="#frameworks" 
+                  href="/#frameworks" 
                   className="text-sm text-muted-foreground hover:text-foreground transition-colors"
                 >
                   Frameworks

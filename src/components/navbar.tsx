@@ -27,19 +27,19 @@ export function Navbar() {
         <nav className="flex flex-1 items-center space-x-2 justify-end">
           <div className="hidden md:flex md:items-center md:gap-5">
             <Link 
-              href="#features" 
+              href="/#features" 
               className="text-sm font-medium transition-colors hover:text-primary"
             >
               Features
             </Link>
             <Link 
-              href="#use-cases" 
+              href="/#use-cases" 
               className="text-sm font-medium transition-colors hover:text-primary"
             >
               Use Cases
             </Link>
             <Link 
-              href="#frameworks" 
+              href="/#frameworks" 
               className="text-sm font-medium transition-colors hover:text-primary"
             >
               Frameworks

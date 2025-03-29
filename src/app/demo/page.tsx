@@ -16,7 +16,7 @@ export default function DemoPage() {
             </h1>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
               Experience the Zip AI Toolkit in action with different AI frameworks. 
-              See how easy it is to integrate payment capabilities into your AI applications.
+              Unlock new business opportunities and improve customer experiences with AI-powered payment capabilities.
             </p>
           </div>
           
