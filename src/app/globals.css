@@ -1,5 +1,7 @@
-@import "tailwindcss";
-@import "tw-animate-css";
+@import 'tailwindcss';
+@import 'tw-animate-css';
+
+@plugin '@tailwindcss/typography';
 
 @custom-variant dark (&:is(.dark *));
 
@@ -223,7 +225,7 @@
 /* Grid background pattern */
 .grid-background {
   background-size: 100px 100px;
-  background-image: 
+  background-image:
     linear-gradient(to right, rgba(217, 217, 217, 0.05) 1px, transparent 1px),
     linear-gradient(to bottom, rgba(217, 217, 217, 0.05) 1px, transparent 1px);
   background-position: top center;
@@ -231,7 +233,7 @@
 
 .grid-background-dark {
   background-size: 100px 100px;
-  background-image: 
+  background-image:
     linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
     linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
   background-position: top center;
