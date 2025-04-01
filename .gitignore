@@ -39,3 +39,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# converter script
+convert-svg-to-png.jsconvert-svg-to-png.js
