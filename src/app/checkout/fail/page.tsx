@@ -9,10 +9,9 @@ import { Card, CardContent } from '@/components/ui/card';
 export default async function CheckoutFailPage({
   searchParams,
 }: {
-  searchParams: { session_id?: string };
+  searchParams: Promise<{ session_id?: string }>;
 }) {
-  // Access session_id directly from the props to avoid dynamic API issues
-  const sessionId = searchParams.session_id;
+  const sessionId = (await searchParams)?.session_id;
   const session = sessionId ? await getZipSession(sessionId) : null;
 
   return (
