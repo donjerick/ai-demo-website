@@ -10,7 +10,7 @@ interface Message {
   id?: string;
   role: string;
   content: string;
-  timestamp?: string;
+  timestamp?: number;
 }
 
 export function OpenAIDemo() {
@@ -136,50 +136,39 @@ export function OpenAIDemo() {
     // Only run if we have enough messages to potentially have duplicates
     if (chatHistory.length <= 1) return;
 
+    console.log({ chatHistory });
+
     // Create a map to track unique messages by ID
     const uniqueMessages: Message[] = [];
     const seenIds = new Set<string>();
-    const seenContents = new Map<string, boolean>();
-    const userMessageContents = new Set<string>();
 
-    // First pass: collect all user message contents
-    for (const message of chatHistory) {
-      if (message.role === 'user') {
-        userMessageContents.add(message.content);
-      }
-    }
-
-    // Process all messages to keep only unique ones
+    // A more straightforward approach: give priority to OpenAI IDs
     for (const message of chatHistory) {
       // Skip any internal system messages
       if (message.content.includes('INTERNAL_SYSTEM_MESSAGE')) {
         continue;
       }
 
-      if (message.role === 'user') {
-        // For user messages, check if we've already added this content
-        if (userMessageContents.has(message.content)) {
-          // This is the first occurrence of this content
+      // If it has an OpenAI ID (starts with "msg_"), always keep it
+      if (message.id && message.id.startsWith('msg_')) {
+        // Check if last message has same content
+        const lastMessage = uniqueMessages[uniqueMessages.length - 1];
+        if (lastMessage && lastMessage.content === message.content) {
+          // Remove the previous message with temporary ID (timestamp) and use the message with OpenAI ID
+          uniqueMessages.pop();
           uniqueMessages.push(message);
-          // Remove from set so we don't add duplicates
-          userMessageContents.delete(message.content);
-        }
-      } else {
-        // If the message has an ID, use that for deduplication
-        if (message.id) {
+          seenIds.add(message.id);
+        } else {
           if (!seenIds.has(message.id)) {
             uniqueMessages.push(message);
             seenIds.add(message.id);
           }
         }
-        // Otherwise, use content + role as a fallback deduplication method
-        else {
-          const contentKey = `${message.role}:${message.content}`;
-          if (!seenContents.has(contentKey)) {
-            uniqueMessages.push(message);
-            seenContents.set(contentKey, true);
-          }
-        }
+      }
+      // For client-generated IDs, we always add
+      else {
+        uniqueMessages.push(message);
+        seenIds.add(message.id!);
       }
     }
 
@@ -288,10 +277,10 @@ export function OpenAIDemo() {
       setChatHistory((prev) => [
         ...prev,
         {
-          id: new Date().toISOString(),
+          id: new Date().getTime().toString(),
           role: 'assistant',
           content: 'Sorry, there was an error processing your request. Please try again.',
-          timestamp: new Date().toISOString(),
+          timestamp: new Date().getTime(),
         },
       ]);
       setIsLoading(false);
@@ -315,7 +304,17 @@ export function OpenAIDemo() {
       generateChatTitle(userInput);
     }
 
-    setChatHistory((prev) => [...prev, { role: 'user', content: userInput }]);
+    const timestamp = new Date().getTime();
+
+    setChatHistory((prev) => [
+      ...prev,
+      {
+        id: timestamp.toString(),
+        role: 'user',
+        content: userInput,
+        timestamp,
+      },
+    ]);
 
     setIsLoading(true);
 
@@ -381,17 +380,17 @@ export function OpenAIDemo() {
   }, []);
 
   return (
-    <div className="flex h-[640px] flex-col overflow-hidden rounded-lg bg-black">
+    <div className="flex h-[720px] flex-col overflow-hidden rounded-none bg-black md:h-[640px] md:rounded-lg">
       {!threadId && chatHistory.length === 0 ? (
-        <div className="-mt-8 flex h-full flex-col items-center justify-center p-6 text-center">
-          <div className="mb-8 text-3xl font-semibold text-white">
+        <div className="-mt-8 flex h-full flex-col items-center justify-center p-4 text-center sm:p-6">
+          <div className="mb-6 text-2xl font-semibold text-white sm:mb-8 sm:text-3xl">
             Hello! Where would you like to fly? ✈️
           </div>
           <div className="w-full max-w-[640px]">
             <form
               ref={initialFormRef}
               onSubmit={handleSubmit}
-              className="initial-form-container relative flex min-h-[120px] items-start space-x-2 overflow-hidden rounded-xl border border-zinc-700 bg-zinc-800 transition-all duration-200 ease-out hover:border-zinc-600"
+              className="initial-form-container relative flex min-h-[120px] items-start overflow-hidden rounded-xl border border-zinc-700 bg-zinc-800 transition-all duration-200 ease-out hover:border-zinc-600"
             >
               <div className="textarea-container relative w-full">
                 <AutoResizeTextarea
@@ -399,7 +398,7 @@ export function OpenAIDemo() {
                   onChange={(e) => setUserInput(e.target.value)}
                   onKeyDown={handleKeyDown}
                   placeholder="How can I help you today?"
-                  className="absolute inset-0 bottom-14 resize-none border-0 bg-zinc-800! p-3.5 pr-9 text-white placeholder:text-zinc-400 focus-visible:ring-0 focus-visible:ring-offset-0"
+                  className="absolute inset-0 bottom-14 resize-none border-0 bg-zinc-800! p-3 pr-9 text-white placeholder:text-zinc-400 focus-visible:ring-0 focus-visible:ring-offset-0 sm:p-3.5"
                   minHeight={100}
                   maxHeight={240}
                   formRef={initialFormRef}
@@ -408,7 +407,7 @@ export function OpenAIDemo() {
                   ref={initialTextareaRef}
                 />
               </div>
-              <div className="absolute bottom-4 left-3.5 font-mono text-xs text-zinc-500">
+              <div className="absolute bottom-3 left-3 font-mono text-xs text-zinc-500 sm:bottom-4 sm:left-3.5">
                 GPT-4o
               </div>
               <Button
@@ -416,13 +415,13 @@ export function OpenAIDemo() {
                 disabled={isLoading || !userInput.trim()}
                 size="icon"
                 variant="ghost"
-                className="absolute right-3.5 bottom-3.5 z-30 size-8 cursor-pointer rounded-md border border-zinc-500 text-white hover:bg-zinc-700"
+                className="absolute right-3 bottom-3 z-30 size-7 cursor-pointer rounded-md border border-zinc-500 text-white hover:bg-zinc-700 sm:right-3.5 sm:bottom-3.5 sm:size-8"
               >
-                <ArrowUp className="h-5 w-5" />
+                <ArrowUp className="h-4 w-4 sm:h-5 sm:w-5" />
                 <span className="sr-only">Send</span>
               </Button>
             </form>
-            <div className="mt-6 flex flex-col gap-2">
+            <div className="mt-6 flex flex-wrap justify-center gap-2">
               <div className="mb-1 text-center text-xs text-zinc-500">Try these examples</div>
               <div className="flex flex-wrap justify-center gap-2">
                 <Button
@@ -459,10 +458,10 @@ export function OpenAIDemo() {
         </div>
       ) : (
         <>
-          <div className="flex items-center justify-between border-b border-zinc-800 px-4 py-3">
+          <div className="flex items-center justify-between border-b border-zinc-800 px-3 py-2 sm:px-4 sm:py-3">
             {threadId && (
               <>
-                <div className="max-w-[70%] truncate text-base font-semibold text-white">
+                <div className="max-w-[65%] truncate text-sm font-semibold text-white sm:max-w-[70%] sm:text-base">
                   {chatTitle || 'New Conversation'}
                 </div>
                 <Button
@@ -471,14 +470,14 @@ export function OpenAIDemo() {
                   className="hover:bg-zinc-20 flex cursor-pointer items-center gap-1 bg-white text-xs text-black"
                   onClick={startNewConversation}
                 >
-                  <Plus className="h-3.5 w-3.5" />
+                  <Plus className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
                   New chat
                 </Button>
               </>
             )}
           </div>
           <div
-            className="custom-scrollbar mb-4 min-h-[400px] flex-1 space-y-4 overflow-y-auto p-4"
+            className="custom-scrollbar mb-2 min-h-[400px] flex-1 space-y-3 overflow-y-auto p-3 sm:mb-4 sm:space-y-4 sm:p-4"
             ref={messagesContainerRef}
           >
             {chatHistory.map((message, index) => {
@@ -493,8 +492,8 @@ export function OpenAIDemo() {
                   <div
                     className={
                       message.role === 'user'
-                        ? 'bg-primary text-primary-foreground max-w-[80%] rounded-lg p-3 text-sm'
-                        : 'max-w-[80%] rounded-lg p-3 text-sm text-zinc-100'
+                        ? 'bg-primary text-primary-foreground max-w-[85%] rounded-lg p-2 text-sm sm:max-w-[80%] sm:p-3'
+                        : 'max-w-full rounded-lg p-2 text-sm text-zinc-100 sm:max-w-[80%] sm:p-3'
                     }
                   >
                     {message.role === 'user' ? (
@@ -543,7 +542,7 @@ export function OpenAIDemo() {
 
             {isLoading && (
               <div className="flex justify-start">
-                <div className="max-w-[80%] rounded-lg bg-zinc-800 p-3 text-sm text-zinc-100">
+                <div className="max-w-[85%] rounded-lg bg-zinc-800 p-2 text-sm text-zinc-100 sm:max-w-[80%] sm:p-3">
                   <div className="flex space-x-2">
                     <div className="h-1.5 w-1.5 animate-bounce rounded-full bg-current" />
                     <div className="h-1.5 w-1.5 animate-bounce rounded-full bg-current [animation-delay:0.2s]" />
@@ -554,11 +553,11 @@ export function OpenAIDemo() {
             )}
           </div>
 
-          <div className="border-t border-zinc-800 p-4">
+          <div className="border-t border-zinc-800 p-3 sm:p-4">
             <form
               ref={conversationFormRef}
               onSubmit={handleSubmit}
-              className="conversation-form relative flex min-h-[32px] items-start space-x-2 overflow-hidden rounded-xl border border-zinc-700 bg-zinc-800 transition-all duration-200 ease-out hover:border-zinc-600"
+              className="conversation-form relative flex min-h-[32px] items-start overflow-hidden rounded-xl border border-zinc-700 bg-zinc-800 transition-all duration-200 ease-out hover:border-zinc-600"
             >
               <div className="textarea-container relative w-full">
                 <AutoResizeTextarea
@@ -566,7 +565,7 @@ export function OpenAIDemo() {
                   onChange={(e) => setUserInput(e.target.value)}
                   onKeyDown={handleKeyDown}
                   placeholder="Reply to Flight AI..."
-                  className="absolute inset-0 bottom-14 resize-none border-0 bg-zinc-800! p-3.5 pr-9 text-white placeholder:text-zinc-400 focus-visible:ring-0 focus-visible:ring-offset-0"
+                  className="absolute inset-0 bottom-14 resize-none border-0 bg-zinc-800! p-3 pr-9 text-white placeholder:text-zinc-400 focus-visible:ring-0 focus-visible:ring-offset-0 sm:p-3.5"
                   minHeight={32}
                   maxHeight={90}
                   formRef={conversationFormRef}
@@ -575,7 +574,7 @@ export function OpenAIDemo() {
                   ref={conversationTextareaRef}
                 />
               </div>
-              <div className="absolute bottom-4 left-3.5 font-mono text-xs text-zinc-500">
+              <div className="absolute bottom-3 left-3 font-mono text-xs text-zinc-500 sm:bottom-4 sm:left-3.5">
                 GPT-4o
               </div>
               <Button
@@ -583,9 +582,9 @@ export function OpenAIDemo() {
                 disabled={isLoading || !userInput.trim()}
                 size="icon"
                 variant="ghost"
-                className="absolute right-3.5 bottom-3.5 z-30 size-8 cursor-pointer rounded-md border border-zinc-500 text-white hover:bg-zinc-700"
+                className="absolute right-3 bottom-3 z-30 size-7 cursor-pointer rounded-md border border-zinc-500 text-white hover:bg-zinc-700 sm:right-3.5 sm:bottom-3.5 sm:size-8"
               >
-                <ArrowUp className="h-5 w-5" />
+                <ArrowUp className="h-4 w-4 sm:h-5 sm:w-5" />
                 <span className="sr-only">Send</span>
               </Button>
             </form>

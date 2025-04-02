@@ -12,6 +12,8 @@ import { VercelAIDemo } from '@/components/demos/vercel-demo';
 import OpenAILogo from '@/components/logos/open-ai';
 import LangChainLogo from '@/components/logos/langchain';
 import VercelLogo from '@/components/logos/vercel';
+import { useState } from 'react';
+import { ChevronDown } from 'lucide-react';
 
 const sdkDemos = [
   {
@@ -54,6 +56,16 @@ const container = {
 };
 
 export function AgentDemos() {
+  const [activeTab, setActiveTab] = useState('openai');
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
+  const handleTabChange = (value: string) => {
+    setActiveTab(value);
+    setIsDropdownOpen(false);
+  };
+
+  const activeDemo = sdkDemos.find((demo) => demo.id === activeTab);
+
   return (
     <motion.div
       variants={container}
@@ -62,8 +74,44 @@ export function AgentDemos() {
       viewport={{ once: true, margin: '-100px' }}
       className="mx-auto max-w-full"
     >
-      <Tabs defaultValue="openai" className="w-full">
-        <TabsList className="mb-8 grid w-full grid-cols-3 rounded-xl bg-transparent px-0 py-1.5 backdrop-blur-sm">
+      {/* Mobile Dropdown */}
+      <div className="mx-4 mb-4 md:hidden">
+        <div
+          className="border-border/50 bg-card/50 flex cursor-pointer items-center justify-between rounded-lg border p-3"
+          onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+        >
+          <div className="flex items-center space-x-2">
+            {activeDemo?.icon && <activeDemo.icon className="size-5" />}
+            <span className="font-medium">{activeDemo?.name}</span>
+          </div>
+          <ChevronDown
+            className={`h-5 w-5 transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`}
+          />
+        </div>
+
+        {isDropdownOpen && (
+          <div className="border-border/50 bg-card/50 mt-1 overflow-hidden rounded-lg border">
+            {sdkDemos.map((demo) => (
+              <div
+                key={demo.id}
+                className={`cursor-pointer p-3 ${
+                  activeTab === demo.id ? 'bg-primary/10 text-primary' : ''
+                }`}
+                onClick={() => handleTabChange(demo.id)}
+              >
+                <div className="flex items-center space-x-2">
+                  {demo.icon && <demo.icon className="size-5" />}
+                  <span>{demo.name}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Desktop Tabs */}
+      <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
+        <TabsList className="mb-8 hidden w-full grid-cols-3 rounded-xl bg-transparent px-0 py-1.5 backdrop-blur-sm md:grid">
           {sdkDemos.map((demo) => (
             <TabsTrigger
               key={demo.id}
@@ -80,7 +128,7 @@ export function AgentDemos() {
 
         {sdkDemos.map((demo) => (
           <TabsContent key={demo.id} value={demo.id}>
-            <Card className="border-border/50 bg-card/50 overflow-hidden rounded-xl border shadow-md backdrop-blur-sm">
+            <Card className="border-border/50 bg-card/50 overflow-hidden rounded-none border shadow-md backdrop-blur-sm md:rounded-xl">
               <CardHeader>
                 <div className="flex flex-col items-start">
                   <h2 className="mb-1 text-2xl font-bold">{demo.title}</h2>
@@ -91,8 +139,10 @@ export function AgentDemos() {
                   </p>
                 </div>
               </CardHeader>
-              <CardContent>
-                <div className="min-h-[640px]">{demo.component && <demo.component />}</div>
+              <CardContent className="max-sm:px-0">
+                <div className="min-h-[720px] md:min-h-[640px]">
+                  {demo.component && <demo.component />}
+                </div>
               </CardContent>
             </Card>
           </TabsContent>
