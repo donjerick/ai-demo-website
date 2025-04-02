@@ -6,6 +6,7 @@ import {
   extractCheckoutSessionId,
   generateBookingReference,
   generateFlights,
+  listAirports,
   registerCheckoutSession,
   scheduleCheckoutPolling,
 } from '@/utils/flightUtils';
@@ -110,6 +111,13 @@ export async function POST(request: NextRequest) {
             toolOutputs.push({
               tool_call_id: toolCall.id,
               output: JSON.stringify(flightResults),
+            });
+          } else if (toolCall.function.name === 'list_airports') {
+            const airports = listAirports();
+            console.log('list_airports response:', airports);
+            toolOutputs.push({
+              tool_call_id: toolCall.id,
+              output: JSON.stringify(airports),
             });
           } else if (toolCall.function.name === 'create_checkout_session') {
             // Handle checkout session creation

@@ -60,6 +60,14 @@ export async function POST(request: NextRequest) {
       },
     };
 
+    const airportsTool: OpenAI.Beta.Assistants.AssistantTool = {
+      type: 'function',
+      function: {
+        name: 'list_airports',
+        description: 'List all supported airports',
+      },
+    };
+
     const assistant = await openai.beta.assistants.create({
       name: 'Flight AI',
       model: 'gpt-4o',
@@ -67,6 +75,8 @@ export async function POST(request: NextRequest) {
         You are a friendly flight booking assistant. Help users find flights based on their travel plans.
         
         When users ask about flights, extract the origin, destination, and dates to search for flights.
+        If the user asks about airports, use the list_airports function.
+        If the origin or destination given by the user cannot recognized, politely suggest based on the list of supported airports.
         Present flight information in a clear, organized manner.
         If a user doesn't provide all the necessary information (origin, destination, dates), politely ask for it.
         Always format prices as PHP currency with ₱ symbol.
@@ -135,7 +145,7 @@ export async function POST(request: NextRequest) {
 
         Always assure users that their payment information is secure and will be handled safely.
       `,
-      tools: [flightsTool, ...zipToolkit.getTools()],
+      tools: [flightsTool, airportsTool, ...zipToolkit.getTools()],
     });
 
     return NextResponse.json(
