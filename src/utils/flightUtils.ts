@@ -780,7 +780,7 @@ export async function scheduleCheckoutPolling(
   checkoutData.attempts++;
 
   // Check if we've exceeded max attempts or timeout
-  const MAX_ATTEMPTS = 10; // 5 minutes (30 seconds × 10)
+  const MAX_ATTEMPTS = 30; // 5 minutes (10 seconds × 30)
   const MAX_AGE = 5 * 60 * 1000; // 5 minutes in milliseconds
 
   if (checkoutData.attempts > MAX_ATTEMPTS || Date.now() - checkoutData.createdAt > MAX_AGE) {
@@ -893,10 +893,10 @@ export async function scheduleCheckoutPolling(
       // If the status check was successful but payment is still pending,
       // we'll continue polling
     }
-    // Schedule next check in 30 seconds if we haven't reached the limit
+    // Schedule next check in 10 seconds if we haven't reached the limit
     setTimeout(() => {
       scheduleCheckoutPolling(threadId, sessionId, openai, zipToolkit, assistantId);
-    }, 30000);
+    }, 10000);
   } catch (error) {
     console.error('Error in checkout polling:', error);
 
@@ -904,7 +904,7 @@ export async function scheduleCheckoutPolling(
     if (checkoutData.attempts < MAX_ATTEMPTS) {
       setTimeout(() => {
         scheduleCheckoutPolling(threadId, sessionId, openai, zipToolkit, assistantId);
-      }, 30000);
+      }, 10000);
     } else {
       // Remove from polling if too many errors
       updateCheckoutPolling(
